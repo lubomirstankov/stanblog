@@ -20,6 +20,9 @@ $check = mysqli_num_rows($numbers);
                     <li class= "">
                         <a href="add-post.php"><i class="fa fa-pencil "></i>Add Post  </a>
                     </li>
+                    <li class= "">
+                        <a href="add-post.php"><i class="fa fa-file "></i>Add Page  </a>
+                    </li>
                     
                 </ul>
                             </div>

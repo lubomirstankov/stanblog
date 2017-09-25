@@ -1,7 +1,8 @@
-﻿<?php session_start();
+<?php session_start();
 include ("../inc/database.php");
 include ("../inc/config.php");
 include("../inc/session_manager.class.php");
+$msg = "";
 
 $ses = new session_manager();
 
@@ -25,7 +26,19 @@ $num = mysqli_num_rows($role_color);
 if ($num == 1) {
 
 } else if ($num != 1){
-die("You don't have Administration permissions!");
+die("You have no permission to that page :)");
+}
+if (isset($_POST['submit'])) {
+	$pname = $mysqli->real_escape_string($_POST['pname']);
+	$plink = $mysqli->real_escape_string($_POST['plink']);
+	
+
+	$creator = $mysqli->query("INSERT INTO stanblog_pages (page_name,page_link,visible) VALUES ('$pname','$plink','1')");
+if($creator) {
+	 $msg = '<h4><div class="alert alert-success"> <center> The page is created!!! </h4></div></center>';
+} else {
+	$msg = '<h4><div class="alert alert-danger"> <center> The page is not created!!! </h4></div></center>';
+}
 }
 ?>
 <!DOCTYPE html>
@@ -76,7 +89,7 @@ die("You don't have Administration permissions!");
                 <div class="row">
                     <div class="col-lg-12 ">
                         <div class="alert alert-info">
-                             <strong>Welcome <?php echo $session_name;?> ! </strong> Today is <?php echo date('d'); ?>/<?php echo date('m'); ?>/<?php echo date('Y'); ?>. Have a nice day!
+                             <strong>Welcome <?php echo $ses->get_session_name();?> ! </strong> Today is <?php echo date('d'); ?>/<?php echo date('m'); ?>/<?php echo date('Y'); ?>. Have a nice day!
                         </div>
                        
                     </div>
@@ -88,46 +101,17 @@ die("You don't have Administration permissions!");
               </div>
                  <!-- /. ROW  --> 
                 <div class="row text-center pad-top">
-                 
-                 <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
-                      <div class="div-square">
-                           <a href="add-post.php" >
- <i class="fa fa-clipboard fa-5x"></i>
-                      <h4>New post</h4>
-                      </a>
-                      </div>
-                     
-                     
-                  </div>
-                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
-                      <div class="div-square">
-                           <a href="users.php" >
- <i class="fa fa-users fa-5x"></i>
-                      <h4>Users</h4>
-                      </a>
-                      </div>
-                     
-                     
-                  </div>
-                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
-                      <div class="div-square">
-                           <a href="adm-logs.php" >
- <i class="fa fa-gg fa-5x"></i>
-                      <h4>Admin Logs</h4>
-                      </a>
-                      </div>              
-                     
-                  </div>
-                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
-                      <div class="div-square">
-                           <a href="add-page.php" >
- <i class="fa fa-paper-plane fa-5x"></i>
-                      <h4>Add page</h4>
-                      </a>
-                      </div>              
-                     
-                  </div>
+				<div class="col-lg-12 col-md-6">
+<form method="POST" action="">
+<input type="text" class="form-control" name="pname" placeholder="Page Name" required autofocus="" />
+<br />
+<input type="text" class="form-control" name="plink" placeholder="Page Link, Example: http://google.com" required autofocus="" />
+<br />
+<button type='submit' class='btn btn-primary' name='submit'>Create</button>
+</form>
+<?php echo $msg; ?>
               </div>   
+			  </div>
                   <!-- /. ROW  -->    
           
 
