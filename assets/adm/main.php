@@ -55,7 +55,7 @@
 						$rowsnum = mysqli_num_rows($checkif);
 						if ($rowsnum==1) {
 						?>
-						<a href="editpost.php?post=<?php echo $row['postID']; ?>">Edit</a>
+						<a href="bl-adm/edit-post.php?post=<?php echo $row['postID']; ?>">Edit</a>
 						<?php 
 						} 
 						?>

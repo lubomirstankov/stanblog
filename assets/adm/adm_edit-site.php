@@ -1,53 +1,3 @@
-<?php session_start();
-include ("../inc/database.php");
-include ("../inc/config.php");
-include("../inc/session_manager.class.php");
-$msg = "";
-$err = "";
-
-$ses = new session_manager();
-
-if($ses->check_session()===false) {
-	die("You have no permission to that page :)");
-} else {
-	// Get Browser Function 
-require_once("browser.func.php");
-    // END
-	
-	
-$ip = $_SERVER['REMOTE_ADDR'];
-$session_name = $ses->get_session_name();
-$date = $mysqli->real_escape_string(date('d')."/".date('m')."/".date('Y'));
-$hour = $mysqli->real_escape_string(date('h:i:sa'));
-$page = $mysqli->real_escape_string($_SERVER['PHP_SELF']);
-$mysqli->query("INSERT INTO stanblog_admin_log (page,ip_addr,user,date,time,browser) VALUES ('$page','$ip', '$session_name', '$date','$hour','$browser')");
-}
-$role_color = $mysqli->query("SELECT * FROM stanblog_users WHERE user='$session_name' AND role='admin'");
-$num = mysqli_num_rows($role_color);
-if ($num == 1) {
-
-} else if ($num != 1){
-die("You don't have Administration permissions!");
-}
-
-if (isset($_POST['submit'])) {
-if (!empty($_POST['postTitle']) && !empty($_POST['postDesc'])) {
-	
-	$post_title = $mysqli->real_escape_string($_POST['postTitle']);
-	$post_desc = $mysqli->real_escape_string($_POST['postDesc']);
-	
-	$inserter = $mysqli->query("INSERT INTO stanblog_posts (postTitle,PostBy,PostCont) VALUES ('$post_title','$session_name','$post_desc')");
-	if ($inserter) {
-		$msg = '<h4><div class="alert alert-success"> <center> You successfull added new post!! </h4></div></center>';
-	} else {
-		$err = '<h4><div class="alert alert-danger"> <center> Some problem with insert a post!!! </h4></div></center> <br />'.$mysqli->errno;
-	}
-	
-} else {
-	$err = '<h4><div class="alert alert-danger"> <center> Please enter a title or text!! </h4></div></center>';
-}
-}
-?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -57,6 +7,9 @@ if (!empty($_POST['postTitle']) && !empty($_POST['postDesc'])) {
 	<!-- BOOTSTRAP STYLES-->
     <link href="assets/css/bootstrap.css" rel="stylesheet" />
      <!-- FONTAWESOME STYLES-->
+  
+<script src="https://use.fontawesome.com/783d16b3ff.js"></script>
+
     <script src="//tinymce.cachefly.net/4.0/tinymce.min.js"></script>
   <script>
           tinymce.init({
@@ -69,7 +22,6 @@ if (!empty($_POST['postTitle']) && !empty($_POST['postDesc'])) {
               toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
           });
   </script>
-<script src="https://use.fontawesome.com/783d16b3ff.js"></script>
 
         <!-- CUSTOM STYLES-->
     <link href="assets/css/custom.css" rel="stylesheet" />
@@ -107,7 +59,7 @@ if (!empty($_POST['postTitle']) && !empty($_POST['postDesc'])) {
                 <div class="row">
                     <div class="col-lg-12 ">
                         <div class="alert alert-info">
-                             <strong>Welcome <?php echo $session_name;?> ! </strong> Today is <?php echo date('d'); ?>/<?php echo date('m'); ?>/<?php echo date('Y'); ?>. Have a nice day!
+                             <strong>Welcome <?php echo $ses->get_session_name();?> ! </strong> Today is <?php echo date('d'); ?>/<?php echo date('m'); ?>/<?php echo date('Y'); ?>. Have a nice day!
                         </div>
                        
                     </div>
@@ -119,23 +71,89 @@ if (!empty($_POST['postTitle']) && !empty($_POST['postDesc'])) {
               </div>
                  <!-- /. ROW  --> 
                 <div class="row text-center pad-top">
-                 <div class="col-lg-12 col-md-6">
-				 	<form action='' method='post'>
+				<div class="col-lg-12 col-md-6">
+<?php 
+if (isset($_GET['edit']) == 'mt') {
+	if($_GET['edit'] == 'mt') {
+?>
+<form method="POST" action="">
+<label for="maint">New Title Name</lable>
+<input type='text' class='form-control' name='maint'>
+<br />
+<input type='submit' class='btn btn-primary' name='submit-mt' value='Change'>
+<br />
+</form>
+<?php echo $msg;?>
+<?php echo $err;?>
+<br />
+<hr />
+<?php
+}
+}
+?>
+<?php 
+if (isset($_GET['edit'])) {
+	if($_GET['edit'] == 'bt') {
+?>
+<form method="POST" action="">
+<label for="maint">New Blog Title Name</lable>
+<input type='text' class='form-control' name='bt'>
+<br />
+<input type='submit' class='btn btn-primary' name='submit-bt' value='Change'>
+<br />
+</form>
+<?php echo $msg;?>
+<?php echo $err;?>
+<br />
+<hr />
+<?php
+}
+} 
+?>
+<?php 
+if (isset($_GET['edit'])) {
+	if($_GET['edit'] == 'bn') {
+?>
+<form method="POST" action="">
+<label for="maint">New Blog Name</lable>
+<input type='text' class='form-control' name='bn'>
+<br />
+<input type='submit' class='btn btn-primary' name='submit-bn' value='Change'>
+<br />
+</form>
+<?php echo $msg;?>
+<?php echo $err;?>
+<br />
+<hr />
+<?php
+}
+} 
+?>
+                       <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th><center>Main Title</center></th>
+                                        <th><center>Blog Title</center></th>
+                                        <th><center>Blog Name</center></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    <tr class="success">
+<?php 
+$title_q = $mysqli->query("SELECT * FROM stanblog_titles");
+$title = mysqli_fetch_row($title_q);
+?>
+                                        <td><?php echo $title['0']; ?> <label class='fa fa-pencil btn btn-primary'onclick="window.location.href='?edit=mt'"></td>
+                                        <td><?php echo $title['1']; ?> <label class='fa fa-pencil btn btn-primary'onclick="window.location.href='?edit=bt'"></td>
+                                        <td><?php echo $title['2']; ?> <label class='fa fa-pencil btn btn-primary'onclick="window.location.href='?edit=bn'"></td>
 
-		<p><label>Title</label><br />
-		<input type='text' name='postTitle' value='<?php if($err) {echo $_POST['postTitle'];} ?>'></p>
-
-		<p><label>Post</label><br />
-		<textarea name='postDesc' cols='60' rows='10'><?php if($err) {echo $_POST['postDesc'];} ?></textarea></p>
-
-
-		<p><input type='submit' class='btn btn-success' name='submit' value='Submit'></p>
-
-	</form>
-	<?php echo $msg; ?>
-	<?php echo $err; ?>
-				 </div>
+                                    </tr>                 
+                                </tbody>
+                            </table>
+                        </div>
               </div>   
+			  </div>
                   <!-- /. ROW  -->    
           
 

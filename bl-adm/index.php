@@ -127,6 +127,24 @@ die("You don't have Administration permissions!");
                       </div>              
                      
                   </div>
+                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                      <div class="div-square">
+                           <a href="edit-post.php" >
+ <i class="fa fa-pencil fa-5x"></i>
+                      <h4>Edit Post</h4>
+                      </a>
+                      </div>              
+                     
+                  </div>
+                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                      <div class="div-square">
+                           <a href="edit-site.php" >
+ <i class="fa fa-paint-brush fa-5x"></i>
+                      <h4>Edit Site</h4>
+                      </a>
+                      </div>              
+                     
+                  </div>
               </div>   
                   <!-- /. ROW  -->    
           

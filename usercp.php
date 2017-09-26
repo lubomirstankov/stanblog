@@ -19,6 +19,7 @@
 require ("inc/database.php");
 require ("inc/config.php");
 require ("inc/session_manager.class.php");
+require ("lang/en.lang.php");
 // Includes
 //
 //

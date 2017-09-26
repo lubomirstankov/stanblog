@@ -14,9 +14,9 @@
 	$query = $mysqli->query("UPDATE stanblog_users SET avatar='$uploaded_image' WHERE user='$session_name'");
 	if ($query) {
     if ($file_size < 1048567) {
-		$img = "Success";
+		$img = SuccessMSG;
 	} else {
-     $img = "Please upload image less than 1 mb";
+     $img = LessThan1MB-MSG;
     }
    }
 }
@@ -37,12 +37,12 @@ if (isset($_POST['sub'])) {
 		$mysqli->query("UPDATE stanblog_users SET pass='$pasenc' WHERE user='$session_name'");
 		session_unset();
 		session_destroy();
-		$msg = "Success";
+		$msg = SuccessMSG;
 	} else {
-		$msg = "Your secret key doesnt match..";
+		$msg = secret-dsnt-MSG;
 	}
 	} else {
-		$msg = "Please fill all fields";
+		$msg = fill-all-fields;
 	}
 }
 
@@ -54,12 +54,12 @@ if (isset($_POST['newcitysubmit'])) {
 	$newcity = $mysqli->real_escape_string($_POST['city']);
 	$ch = $mysqli->query("UPDATE stanblog_users SET city='$newcity' WHERE user='$session_name'");
 	if($ch) {
-			$msg = "Success";
+			$msg = SuccessMSG;
 	} else {
-		$msg = "This is not a number";
+		$msg = dsnt-number;
 	}
 	} else {
-		$msg = "Please fill all fields";
+		$msg = fill-all-fields;
 	}
 }
 
@@ -71,11 +71,11 @@ if (isset($_POST['phonesubmit'])) {
 	$phonen = $mysqli->real_escape_string($_POST['phonen']);
 	$ch = $mysqli->query("UPDATE stanblog_users SET phone='$phonen' WHERE user='$session_name'");
 	if($ch) {
-			$msg = "Success";
+			$msg = SuccessMSG;
 	} else {
-		$msg = "This is not a number";
+		$msg = dsnt-number;
 	}
 	} else {
-		$msg = "Please fill all fields";
+		$msg = fill-all-fields;
 	}
 }

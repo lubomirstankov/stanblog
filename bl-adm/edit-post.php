@@ -2,6 +2,8 @@
 include ("../inc/database.php");
 include ("../inc/config.php");
 include("../inc/session_manager.class.php");
+$msg = "";
+$err = "";
 
 $ses = new session_manager();
 
@@ -27,6 +29,25 @@ if ($num == 1) {
 } else if ($num != 1){
 die("You have no permission to that page :)");
 }
+
+if (isset($_POST['submit'])) {
+if (!empty($_POST['postTitle']) && !empty($_POST['postDesc'])) {
+	
+	$post_title = $mysqli->real_escape_string($_POST['postTitle']);
+	$post_desc = $mysqli->real_escape_string($_POST['postDesc']);
+	$id = $mysqli->real_escape_string($_GET['post']);
+	
+	$inserter = $mysqli->query("UPDATE stanblog_posts SET postTitle='$post_title', postCont = '$post_desc' WHERE postID = '$id'");
+	if ($inserter) {
+		$msg = '<h4><div class="alert alert-success"> <center> You successfull change post!! </h4></div></center>';
+	} else {
+		$err = '<h4><div class="alert alert-danger"> <center> Some problem with insert a post!!! </h4></div></center> <br />'.$mysqli->errno;
+	}
+	
+} else {
+	$err = '<h4><div class="alert alert-danger"> <center> Please enter a title or text!! </h4></div></center>';
+}
+}
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -39,6 +60,19 @@ die("You have no permission to that page :)");
      <!-- FONTAWESOME STYLES-->
   
 <script src="https://use.fontawesome.com/783d16b3ff.js"></script>
+
+    <script src="//tinymce.cachefly.net/4.0/tinymce.min.js"></script>
+  <script>
+          tinymce.init({
+              selector: "textarea",
+              plugins: [
+                  "advlist autolink lists link image charmap print preview anchor",
+                  "searchreplace visualblocks code fullscreen",
+                  "insertdatetime media table contextmenu paste"
+              ],
+              toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+          });
+  </script>
 
         <!-- CUSTOM STYLES-->
     <link href="assets/css/custom.css" rel="stylesheet" />
@@ -89,62 +123,58 @@ die("You have no permission to that page :)");
                  <!-- /. ROW  --> 
                 <div class="row text-center pad-top">
 				<div class="col-lg-12 col-md-6">
-				<?php 
-				if (isset($_GET['desc']) == 'all') {
-                ?>
-				<a href="adm-logs.php" style="float:left">Back to normal</a>
-				<?php
-				} else {
-				?>
-				<a href="?desc=all" style="float:left">See All Logs</a>
-				<?php 
-				}
-				?>
-				<a href="?dell=all" style="float:right">Delete All Logs</a>
-                            <table class="table table-striped table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Last Page</th>
-                                    <th>Ip Adress</th>
-                                    <th>Username</th>
-									<th>Date</th>
-									<th>Time</th>
-									<th>Browser</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                               
-								<?php
-								if (isset($_GET['desc']) == 'all') {
-									$desc = '99999999';
-								} else {
-									$desc = '10';
-								}
-								if(isset($_GET['dell']) == 'all') {
-									$del = $mysqli->query("DELETE FROM stanblog_admin_log");
-									if ($del){
-									echo '<script>window.location.href="adm-logs.php"</script>';
-									}
-								}
-								$adm_logs = $mysqli->query("SELECT * FROM stanblog_admin_log ORDER BY id DESC LIMIT 0,$desc");
-								while($row = $adm_logs->fetch_assoc()) {
-								?>
-								 <tr>
-                                    <td><?php echo $row['id']; ?></td>
-                                    <td><?php echo $row['page']; ?></td>
-                                    <td><?php echo $row['ip_addr']; ?></td>
-                                    <td><?php echo $row['user']; ?></td>
-                                    <td><?php echo $row['date']; ?></td>
-                                    <td><?php echo $row['time']; ?></td>
-                                    <td><?php echo $row['browser']; ?></td>
-									</tr>
-								<?php
-								}
-								?>
-                                
-                            </tbody>
-                        </table>
+<?php
+if(isset($_GET['post'])) {
+	$id = $mysqli->real_escape_string($_GET['post']);
+} else if (empty($_GET['post'])) {
+ $id = '';
+} 
+$cpost = $mysqli->query("SELECT * FROM stanblog_posts WHERE postID='$id'");
+while($row = $cpost->fetch_assoc()) {
+?>
+<center>
+	<form action='' method='post'>
+
+		<p><label>Title</label><br />
+		<input type='text' name='postTitle' value='<?php echo $row['postTitle']; ?>'></p>
+
+		<p><label>Post</label><br />
+		<textarea name='postDesc' cols='60' rows='10'><?php echo $row['postCont']; ?></textarea></p>
+
+
+		<p><input type='submit' name='submit' value='Submit'></p>
+
+	</form>
+	<?php echo $msg;?>
+	<?php echo $err;?>
+	</center>
+<?php 
+}
+?>
+                       <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th><center>#</center></th>
+                                        <th><center>Post Title</center></th>
+                                        <th><center>Action</center></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+<?php 
+$selectpost = $mysqli->query("SELECT * FROM stanblog_posts ORDER BY postDate ASC");
+while($row = $selectpost->fetch_assoc()) {
+?>                        <tr class="success">
+                                        <td><?php echo $row['postID']; ?></td>
+                                        <td><?php echo $row['postTitle']; ?></td>
+                                        <td><button class='btn btn-success' onclick='window.location.href="edit-post.php?post=<?php echo $row['postID']; ?>"'>Edit</button></td>
+<?php
+}
+?>
+                                    </tr>                 
+                                </tbody>
+                            </table>
+                        </div>
               </div>   
 			  </div>
                   <!-- /. ROW  -->    

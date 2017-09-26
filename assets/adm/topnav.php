@@ -23,6 +23,9 @@ $check = mysqli_num_rows($numbers);
                     <li class= "">
                         <a href="add-post.php"><i class="fa fa-file "></i>Add Page  </a>
                     </li>
+                    <li class= "">
+                        <a href="edit-post.php"><i class="fa fa-paperclip "></i>Edit Post  </a>
+                    </li>
                     
                 </ul>
                             </div>

@@ -15,7 +15,7 @@
 		<div id="header">
 			<div id="logo">
 				<h1><a href="#"><?php echo $blog_title; ?> </a></h1>
-				<p>Welcome to <a href="#" rel="nofollow"><?php echo $blog_name; ?></a></p>
+				<p><?php echo WelcomeMsg;?> <a href="#" rel="nofollow"><?php echo $blog_name; ?></a></p>
 			</div>
 		</div>
 	</div>
